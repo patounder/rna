@@ -1,5 +1,10 @@
 package cl.dcc.uchile.rna;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static cl.dcc.uchile.rna.LetterEnum.Letter.SPACE;
+
 /**
  * entregue como salida la distancia entre las palabras texto1 y texto2 medida como el número de cambios de letra que
  * hay que hacer para ir de texto1 a texto2 luego de sobrelapar una con otra al máximo
@@ -10,13 +15,70 @@ package cl.dcc.uchile.rna;
 public class ConverterService {
     public double translate(String firstSecuence, String secondSecuence, int[][] matrix){
 
-        char[] firstSecuenceArray = firstSecuence.toCharArray();
+        char[] firstSecuenceArray = firstSecuence.replace(" ","").toCharArray();
+        char[] secondSecuenceArray = secondSecuence.replace(" ", "").toCharArray();
 
-        for(char letter : firstSecuenceArray){
-            System.out.println(LetterEnum.Letter.valueOf(Character.toString(letter)));
+        RNAsSampleDTO rnAsSampleDTO = normalizeRNAsSample(firstSecuenceArray, secondSecuenceArray);
+
+        int totalCost = 0;
+        for(int i = 0; i < rnAsSampleDTO.getSampleA().size(); i++){
+            LetterEnum.Letter selectedALetter = rnAsSampleDTO.getSampleA().get(i);
+            LetterEnum.Letter selectedBLetter = rnAsSampleDTO.getSampleB().get(i);
+
+            int cost = matrix[selectedALetter.getIndexCostMatrix()][selectedBLetter.getIndexCostMatrix()];
+            totalCost = totalCost + cost;
         }
 
+        return totalCost;
+    }
 
-        return 0;
+
+    //Create lists with both samples to equals size
+    public RNAsSampleDTO normalizeRNAsSample(char[] sampleA, char[] sampleB){
+            int greaterSampleIndex = getGreaterSampleIndex(sampleA, sampleB);
+            int sampleAIndex = 1;
+
+            if(greaterSampleIndex == sampleAIndex){
+                return buildRNAsSampleDTO(sampleA, sampleB);
+            }
+
+            return buildRNAsSampleDTO(sampleB, sampleA);
+    }
+
+    public int getGreaterSampleIndex(char[] sampleA, char[] sampleB){
+        if(sampleA.length >= sampleB.length){
+            return 1;
+        }
+
+        return 2;
+    }
+
+    public RNAsSampleDTO buildRNAsSampleDTO(char[] largerSample, char[] smallerSample){
+
+        List<LetterEnum.Letter> listLetterSampleA = getSpaceLetterList(largerSample.length);
+        List<LetterEnum.Letter> listLetterSampleB = getSpaceLetterList(largerSample.length);
+
+        replaceSpaceLetters(listLetterSampleA, largerSample);
+        replaceSpaceLetters(listLetterSampleB, smallerSample);
+
+        return new RNAsSampleDTO(listLetterSampleA, listLetterSampleB);
+    }
+
+    public List<LetterEnum.Letter> getSpaceLetterList(int listSize){
+        List<LetterEnum.Letter> spaceLetterList = new ArrayList<>(listSize);
+
+        for (int i = 0; i < listSize; i++){
+            spaceLetterList.add(i, SPACE);
+        }
+        return spaceLetterList;
+    }
+
+    public void replaceSpaceLetters(List<LetterEnum.Letter> letterList, char[] sample){
+
+        for(int i = 0; i < sample.length; i++){
+            char letterSelected = sample[i];
+            LetterEnum.Letter letter = LetterEnum.Letter.valueOf(Character.toString(letterSelected));
+            letterList.add(i, letter);
+        }
     }
 }
