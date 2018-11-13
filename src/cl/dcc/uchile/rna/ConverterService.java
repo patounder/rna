@@ -13,7 +13,7 @@ import static cl.dcc.uchile.rna.LetterEnum.Letter.SPACE;
  * texto2=AUG GCC ACG UUU ACG CGG GGG GGC AAU UAA AAU ACG
  */
 public class ConverterService {
-    public double translate(String firstSecuence, String secondSecuence, int[][] matrix){
+    public double calcCostTranslate(String firstSecuence, String secondSecuence, int[][] matrix){
 
         char[] firstSecuenceArray = firstSecuence.replace(" ","").toCharArray();
         char[] secondSecuenceArray = secondSecuence.replace(" ", "").toCharArray();
@@ -21,11 +21,16 @@ public class ConverterService {
         RNAsSampleDTO rnAsSampleDTO = normalizeRNAsSample(firstSecuenceArray, secondSecuenceArray);
 
         int totalCost = 0;
+        int cost;
         for(int i = 0; i < rnAsSampleDTO.getSampleA().size(); i++){
             LetterEnum.Letter selectedALetter = rnAsSampleDTO.getSampleA().get(i);
             LetterEnum.Letter selectedBLetter = rnAsSampleDTO.getSampleB().get(i);
 
-            int cost = matrix[selectedALetter.getIndexCostMatrix()][selectedBLetter.getIndexCostMatrix()];
+            if(LetterEnum.Letter.SPACE == selectedALetter || LetterEnum.Letter.SPACE == selectedBLetter){
+                cost = matrix[0][4];
+            }else{
+                cost = matrix[selectedALetter.getIndexCostMatrix()][selectedBLetter.getIndexCostMatrix()];
+            }
             totalCost = totalCost + cost;
         }
 
@@ -78,7 +83,7 @@ public class ConverterService {
         for(int i = 0; i < sample.length; i++){
             char letterSelected = sample[i];
             LetterEnum.Letter letter = LetterEnum.Letter.valueOf(Character.toString(letterSelected));
-            letterList.add(i, letter);
+            letterList.set(i, letter);
         }
     }
 }

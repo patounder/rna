@@ -15,7 +15,7 @@ public class RNA {
                 {1,2,2,0,3},
                 {3,3,3,3,0}};
 
-        double total = converterService.translate(secuenceA, secuenceB, costMatrix);
-        System.out.println(total);
+        double totalCost = converterService.calcCostTranslate(secuenceA, secuenceB, costMatrix);
+        System.out.println("Total cost is :"+totalCost);
     }
 }
