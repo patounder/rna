@@ -5,8 +5,10 @@ public class RNA {
     public static void main(String args[]){
         ConverterService converterService = new ConverterService();
 
-        String secuenceA = "ACC AUG GCA ACG UUU ACC CGC GGC GGG AAA UAG";
-        String secuenceB = "AUG GCC ACG UUU ACG CGG GGG GGC AAU UAA AAU ACG";
+
+
+        String secuenceA = args[0];//"ACC AUG GCA ACG UUU ACC CGC GGC GGG AAA UAG";
+        String secuenceB = args[1];//"AUG GCC ACG UUU ACG CGG GGG GGC AAU UAA AAU ACG";
 
         int[][] costMatrix = {
                 {0,2,2,1,3},
